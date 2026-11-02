@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>IBCC — Change requests HiJZB9qN · short design</title>
+<style>
+  :root{
+    --bg:#f9f9ff; --s-lowest:#ffffff; --s-low:#f0f3ff; --s:#e7eefe; --s-high:#e2e8f8; --s-highest:#dce2f3;
+    --gold:#d4a853; --gold-ink:#7b5804; --gold-fixed:#ffdea6; --navy:#1a1a2e;
+    --ink:#151c27; --ink2:#4e4637; --muted:#5d5c74; --err:#ba1a1a; --err-c:#ffdad6;
+    --ok:#1f6b4a; --ok-c:#d7f0e3; --tert:#4c616c; --tert-c:#cfe6f2;
+    --shadow:0 1px 2px rgba(21,28,39,.06),0 8px 24px rgba(21,28,39,.06);
+    --r:8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  header.top{background:var(--navy);color:#fff;padding:40px 0 36px}
+  header.top .eyebrow{color:var(--gold);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+  header.top h1{font-size:30px;line-height:1.2;margin:8px 0 12px;font-weight:700}
+  header.top p{color:#c6c4df;max-width:760px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .chip{display:inline-block;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.08);color:#e2e0fc}
+  nav.toc{background:var(--s-low);padding:14px 0;position:sticky;top:0;z-index:5}
+  nav.toc .wrap{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px}
+  nav.toc a{color:var(--gold-ink);text-decoration:none;font-weight:600}
+  nav.toc a:hover,nav.toc a:focus-visible{text-decoration:underline}
+  main section{padding:44px 0 8px}
+  h2{font-size:22px;margin-bottom:6px}
+  h2 .n{color:var(--gold-ink);margin-right:8px}
+  .lead{color:var(--ink2);max-width:780px;margin-bottom:18px}
+  .grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px;align-items:start}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+  .notes{background:var(--s-lowest);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 20px}
+  .notes h3{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px}
+  .notes ul{padding-left:18px}
+  .notes li{margin:6px 0}
+  .notes .rule{font-size:12px;color:var(--muted)}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--s-high);padding:1px 5px;border-radius:4px}
+  .label code{text-transform:none;letter-spacing:0}
+  .mock .body{overflow-x:auto}
+  .label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 6px}
+  /* mock frame */
+  .mock{background:var(--s-lowest);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .mock .bar{background:var(--s-low);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
+  .mock .bar b{font-size:14px}
+  .mock .body{padding:14px}
+  .btn{display:inline-flex;align-items:center;gap:6px;font:600 13px Inter,system-ui,sans-serif;border:0;border-radius:var(--r);padding:8px 12px;cursor:default}
+  .btn.primary{background:var(--gold);color:#271900}
+  .btn.ghost{background:var(--s-high);color:var(--ink)}
+  .btn.danger{background:var(--err-c);color:#93000a}
+  .well{background:var(--s-high);border-radius:var(--r);padding:8px 10px;font-size:13px;min-height:36px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .well.focus{box-shadow:inset 0 -2px 0 var(--gold)}
+  .field{margin-bottom:10px}
+  .field .lbl{font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row > *{flex:1;min-width:140px}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .pill.ok{background:var(--ok-c);color:var(--ok)}
+  .pill.warn{background:var(--gold-fixed);color:#5d4200}
+  .pill.tert{background:var(--tert-c);color:#071e27}
+  .new{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.06em;background:var(--gold);color:#271900;padding:1px 6px;border-radius:4px;vertical-align:middle;margin-left:6px}
+  .sample{font-size:12px;color:var(--muted);margin-top:8px}
+  /* calendar */
+  .cal{display:grid;grid-template-columns:52px 1fr 1fr;position:relative}
+  .cal .hcol{font-size:11px;color:var(--muted)}
+  .cal .colh{font-size:12px;font-weight:700;padding:6px 8px;background:var(--s-low)}
+  .cal .colh small{display:block;font-weight:500;color:var(--muted)}
+  .lane{position:relative;height:540px;background:repeating-linear-gradient(to bottom,var(--s-lowest) 0,var(--s-lowest) 59px,var(--s-low) 59px,var(--s-low) 60px)}
+  .hours{position:relative;height:540px}
+  .hours span{position:absolute;right:8px;transform:translateY(-50%)}
+  .blk{position:absolute;left:6px;right:6px;border-radius:6px;padding:5px 8px;font-size:11.5px;line-height:1.3;background:var(--gold);color:#271900;font-weight:600}
+  .blk small{display:block;font-weight:500}
+  .blk.b{background:#c9b7e8;color:#1a1a2e}
+  .lunch{position:absolute;left:52px;right:0;border-radius:6px;background:repeating-linear-gradient(135deg,var(--tert-c) 0,var(--tert-c) 8px,#e6f3f9 8px,#e6f3f9 16px);color:#071e27;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;z-index:2}
+  .lunch small{font-weight:500}
+  .total{display:flex;justify-content:space-between;font-size:13px;padding:10px 14px;background:var(--s-low)}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:6px 8px}
+  th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;background:var(--s-low)}
+  tr:nth-child(even) td{background:var(--s-low)}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .seg{display:flex;background:var(--s-high);border-radius:var(--r);padding:3px;gap:3px;font-size:13px;flex-wrap:wrap}
+  .seg span{padding:6px 10px;border-radius:6px;font-weight:600;color:var(--muted)}
+  .seg span.on{background:var(--s-lowest);color:var(--ink);box-shadow:0 1px 2px rgba(21,28,39,.08)}
+  .toggle{width:38px;height:22px;border-radius:999px;background:var(--gold);position:relative;flex:none}
+  .toggle::after{content:"";position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:#fff}
+  .toggle.off{background:var(--s-highest)}
+  .toggle.off::after{right:auto;left:3px}
+  .banner{border-radius:var(--r);padding:10px 12px;font-size:13px;margin-bottom:10px}
+  .banner.warn{background:var(--gold-fixed);color:#3d2b00}
+  .banner.info{background:var(--tert-c);color:#071e27}
+  .banner.ok{background:var(--ok-c);color:#0d3a26}
+  .opt{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;font-size:13px}
+  .opt:nth-child(odd){background:var(--s-low)}
+  .opt .num{color:var(--muted);font-size:12px}
+  .list3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+  @media (max-width:860px){.list3{grid-template-columns:1fr}}
+  footer{margin:48px 0 0;padding:28px 0 40px;background:var(--s-low);font-size:13px;color:var(--muted)}
+  footer b{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">IBCC · C&amp;C Ingenieure · Trello HiJZB9qN</div>
+    <h1>Aqeel's change requests: short design</h1>
+    <p>How the requested changes look inside the existing IBCC app, before we build them. The three reports themselves follow Aqeel's own PDF and Excel templates, so this page only covers the places where the app itself changes. The current visual style stays as it is.</p>
+    <div class="meta">
+      <span class="chip">Requirements BRD v1.2.0 approved</span>
+      <span class="chip">Workflow v1.0.0 approved</span>
+      <span class="chip">For review · 2 Nov 2026</span>
+      <span class="chip">Sample data only</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections">
+  <div class="wrap">
+    <a href="#lunch">1 · Lunch break</a>
+    <a href="#activity">2 · Activity list + project names</a>
+    <a href="#reports">3 · Reports</a>
+    <a href="#user">4 · Working time per employee</a>
+    <a href="#project">5 · Break project</a>
+    <a href="#small">6 · Sick leave and task approval</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- 1 -->
+  <section id="lunch" aria-labelledby="h-lunch">
+    <h2 id="h-lunch"><span class="n">1</span>Lunch break in the My Timesheet calendar</h2>
+    <p class="lead">The gap between two entries around midday is shown as a lunch break across all project columns of the day. It is not counted in any total.</p>
+    <div class="grid">
+      <div>
+        <p class="label">My Timesheet · day view</p>
+        <div class="mock">
+          <div class="bar"><b>Montag, 10. August</b><span class="pill ok">5 bestätigt</span></div>
+          <div class="cal" style="padding-bottom:0">
+            <div class="colh"></div>
+            <div class="colh">Projekt A<small>IB-2026-028</small></div>
+            <div class="colh">Projekt B<small>IB-2026-016</small></div>
+
+            <div class="hours hcol">
+              <span style="top:0">08:00</span><span style="top:60px">09:00</span><span style="top:120px">10:00</span><span style="top:180px">11:00</span><span style="top:240px">12:00</span><span style="top:300px">13:00</span><span style="top:360px">14:00</span><span style="top:420px">15:00</span><span style="top:480px">16:00</span>
+            </div>
+            <div class="lane">
+              <div class="blk" style="top:0;height:208px">Planung<small>08:00–11:30</small></div>
+              <div class="blk" style="top:256px;height:43px">Planung<small>12:15–13:00</small></div>
+              <div class="blk" style="top:480px;height:58px">Planung<small>16:00–17:00</small></div>
+            </div>
+            <div class="lane">
+              <div class="blk b" style="top:300px;height:28px">Besprechung<small>13:00–13:30</small></div>
+              <div class="blk b" style="top:330px;height:133px">Planung<small>13:30–15:45</small></div>
+            </div>
+            <div class="lunch" style="top:244px;height:42px" role="note" aria-label="Lunch break 11:30 to 12:15, 45 minutes, not counted">
+              Mittagspause 11:30–12:15 <small>· 45 min · nicht gezählt</small>
+            </div>
+          </div>
+          <div class="total"><span>Tagessumme (ohne Pause)</span><b>8,00 Std.</b></div>
+        </div>
+        <p class="sample">Sample data. The 15:45–16:00 gap stays a plain gap: it is outside the lunch window.</p>
+      </div>
+      <div class="notes">
+        <h3>How it behaves</h3>
+        <ul>
+          <li>A gap counts as lunch if it <b>touches 11:00–12:30</b>, lasts <b>at least 15 minutes</b>, and is the <b>longest</b> such gap of the day. There's no upper limit.</li>
+          <li>It is measured across <b>all projects</b> of the day, so a gap between project A and project B counts too.</li>
+          <li>Only <b>confirmed</b> entries count, so the calendar shows exactly the break that the working-time record prints.</li>
+          <li>The band is display only: it can't be dragged, edited or confirmed. It has no status of its own.</li>
+          <li>Entries on a <b>break project</b> (§5) use the same striped style and are also left out of every total.</li>
+        </ul>
+        <p class="rule">BRD FR-001, FR-002 · BRULE-001/002/003 · workflow WF-DEC-001</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="activity" aria-labelledby="h-activity">
+    <h2 id="h-activity"><span class="n">2</span>Activity list export and project names (My Timesheet)</h2>
+    <p class="lead">The existing export becomes the <b>Tätigkeitsliste</b> in Aqeel's template. The project picker shows names only.</p>
+    <div class="grid">
+      <div>
+        <p class="label">Export dialog</p>
+        <div class="mock">
+          <div class="bar"><b>Tätigkeitsliste exportieren</b><span>✕</span></div>
+          <div class="body">
+            <div class="banner warn">3 Einträge in diesem Monat sind noch nicht bestätigt und fehlen in der Liste. <u>Jetzt prüfen</u></div>
+            <div class="row">
+              <div class="field"><div class="lbl">Monat</div><div class="well focus">September 2026 <span>▾</span></div></div>
+              <div class="field"><div class="lbl">Format</div><div class="seg"><span class="on">PDF</span><span>Excel</span></div></div>
+            </div>
+            <p style="font-size:12.5px;color:var(--ink2);margin:4px 0 12px">Neu in der Liste: Zeilen <b>Kranktage</b> und <b>Urlaubstage</b> (Tagessoll je Tag), <b>Summe produktiv</b> und <b>Gesamtsumme</b>.</p>
+            <div style="display:flex;gap:8px;justify-content:flex-end"><span class="btn ghost">Abbrechen</span><span class="btn primary">Exportieren</span></div>
+          </div>
+        </div>
+        <p class="label" style="margin-top:18px">Project picker</p>
+        <div class="mock">
+          <div class="opt"><span>Kovacevic</span></div>
+          <div class="opt"><span>Stützwand Nord</span><span class="num">IB-2026-031</span></div>
+          <div class="opt"><span>Stützwand Nord</span><span class="num">IB-2025-112</span></div>
+          <div class="opt"><span>VST Beispiel</span></div>
+        </div>
+        <p class="sample">Today it reads “#d4a853 IB-2026-046 — Kovacevic”. The “#d4a853” is a colour code printed as text by mistake.</p>
+      </div>
+      <div class="notes">
+        <h3>How it behaves</h3>
+        <ul>
+          <li>Hours show in <b>exact minutes</b> (8,25 · 4,83), like Aqeel's templates. The calendar and the old hours report keep quarter-hour rounding.</li>
+          <li>Unconfirmed entries trigger a warning <b>before</b> export, and their count is printed in the file. Export isn't blocked.</li>
+          <li>Leads exporting a colleague's list from the project's <b>Team Hours</b> tab get the same layout. The Kranktage and Urlaubstage rows appear only if they hold <code>reports.view_hr</code>.</li>
+          <li>Project picker: <b>name only</b>. The number is shown only when two projects have the same name.</li>
+          <li>The file is always German, whatever the user's language.</li>
+        </ul>
+        <p class="rule">FR-003, FR-012 · DEC-009, DEC-011</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section id="reports" aria-labelledby="h-reports">
+    <h2 id="h-reports"><span class="n">3</span>Reports: two new report types</h2>
+    <p class="lead">Reports gets two more types next to the existing ones, with the same filter bar and the same PDF and Excel buttons.</p>
+    <div class="grid">
+      <div>
+        <p class="label">Reports · management view (<code>reports.view</code>)</p>
+        <div class="mock">
+          <div class="body">
+            <div class="seg" style="margin-bottom:12px"><span>Stunden</span><span>HR</span><span class="on">Arbeitszeitnachweis <span class="new">NEU</span></span><span>Gesamtbericht <span class="new">NEU</span></span></div>
+            <div class="row">
+              <div class="field"><div class="lbl">Monat</div><div class="well">September 2026 <span>▾</span></div></div>
+              <div class="field"><div class="lbl">Mitarbeitende</div><div class="well">2 ausgewählt <span>▾</span></div></div>
+            </div>
+            <table aria-label="Preview of a working-time record">
+              <thead><tr><th>Datum</th><th>Beginn</th><th>Pause von</th><th>Pause bis</th><th>Ende</th><th class="num">Stunden</th><th class="num">+/-</th></tr></thead>
+              <tbody>
+                <tr><td>01.09.26</td><td>08:00</td><td>11:00</td><td>11:45</td><td>17:00</td><td class="num">8,25</td><td class="num">+0,25</td></tr>
+                <tr><td>02.09.26</td><td>08:00</td><td>11:30</td><td>12:45</td><td>17:15</td><td class="num">8,00</td><td class="num">0,00</td></tr>
+                <tr><td>25.09.26</td><td>K</td><td>K</td><td>K</td><td>K</td><td class="num">8,00</td><td class="num">0,00</td></tr>
+              </tbody>
+            </table>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><span class="btn ghost">Excel</span><span class="btn primary">PDF</span></div>
+          </div>
+        </div>
+        <p class="label" style="margin-top:18px">Reports · employee view (<code>reports.view_own</code>)</p>
+        <div class="mock">
+          <div class="body">
+            <div class="seg" style="margin-bottom:12px"><span>Stunden</span><span class="on">Arbeitszeitnachweis</span><span>Gesamtbericht</span></div>
+            <div class="row"><div class="field"><div class="lbl">Monat</div><div class="well">September 2026 <span>▾</span></div></div><div class="field"><div class="lbl">Mitarbeitende</div><div class="well" style="color:var(--muted)">Nur eigene Daten</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <h3>How it behaves</h3>
+        <ul>
+          <li><b>Arbeitszeitnachweis</b>: one employee per month. Start = first entry, end = last entry, the break from §1, hours = sum of entries, +/- against the employee's daily target (§4), weekly sums Monday to Sunday. The footer reads “Stunden = Summe der Einträge”.</li>
+          <li><b>Gesamtbericht</b>: month <b>or</b> year. For each employee: productive hours, hours per project (largest first), vacation and sick days counted up to today.</li>
+          <li>Filters as in the existing hours report: period, employees, and projects (Gesamtbericht only).</li>
+          <li>Employees see only their own data and have no employee filter. Naming a colleague is refused, not silently swapped.</li>
+          <li>Colleagues' vacation and sick figures appear only with <code>reports.view_hr</code>. Without it, those cells are empty.</li>
+          <li>Public holidays show FT with 0,00 difference. Work logged on a holiday counts as plus hours.</li>
+        </ul>
+        <p class="rule">FR-004, FR-005, FR-006, FR-014 · DEC-008, DEC-011 · WF-DEC-003/004</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section id="user" aria-labelledby="h-user">
+    <h2 id="h-user"><span class="n">4</span>Working time per employee (Users → edit)</h2>
+    <p class="lead">A new “Arbeitszeit” block in the existing user panel holds the daily target and the employment period. It is editable only with <code>users.update</code>.</p>
+    <div class="grid">
+      <div>
+        <p class="label">User panel · new block</p>
+        <div class="mock">
+          <div class="bar"><b>Arbeitszeit</b><span class="new">NEU</span></div>
+          <div class="body">
+            <div class="row">
+              <div class="field"><div class="lbl">Tagessoll (Std.)</div><div class="well focus">6,00</div></div>
+              <div class="field"><div class="lbl">Gültig ab</div><div class="well">15.11.2026 <span>📅</span></div></div>
+            </div>
+            <div class="row">
+              <div class="field"><div class="lbl">Eintritt</div><div class="well">01.03.2024 <span>📅</span></div></div>
+              <div class="field"><div class="lbl">Austritt</div><div class="well" style="color:var(--muted)">— <span>📅</span></div></div>
+            </div>
+            <p class="lbl" style="font-size:12px;color:var(--muted);font-weight:600;margin:6px 0 4px">Verlauf</p>
+            <table aria-label="Daily target history">
+              <tbody>
+                <tr><td>ab 15.11.2026</td><td class="num">6,00</td><td>geändert von IT-Admin · 02.11.2026</td></tr>
+                <tr><td>ab 01.03.2024</td><td class="num">8,00</td><td>Standard</td></tr>
+              </tbody>
+            </table>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><span class="btn primary">Speichern</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <h3>How it behaves</h3>
+        <ul>
+          <li>The default is <b>8,00</b> for everyone, including existing staff.</li>
+          <li>A change applies <b>from its date onward</b>. Earlier days and signed lists keep the old value.</li>
+          <li>Outside the employment period the target is 0, so a mid-month joiner or leaver gets no minus hours.</li>
+          <li>Every change is logged: who, when, old and new value. An end date before the start date is refused.</li>
+          <li>Absence days count as the target minus any hours worked that day. Unpaid leave counts 0.</li>
+        </ul>
+        <p class="rule">FR-009, FR-010, FR-016, NFR-004 · WF-DEC-002</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="project" aria-labelledby="h-project">
+    <h2 id="h-project"><span class="n">5</span>Break project (Projects → edit)</h2>
+    <p class="lead">A project such as “Pause” can be marked as a break project. The switch is visible only to holders of the new <code>project.manage_break_flag</code> permission (IT Administrator and Manager). Project Leads don't see it.</p>
+    <div class="grid">
+      <div>
+        <p class="label">Project panel · new switch</p>
+        <div class="mock">
+          <div class="body">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <div class="toggle" role="img" aria-label="Switch on"></div>
+              <div>
+                <b style="font-size:14px">Pausenprojekt</b>
+                <p style="font-size:12.5px;color:var(--ink2)">Stunden auf diesem Projekt gelten als Pause und fallen aus allen Summen und Berichten, auch aus früheren Monaten.</p>
+              </div>
+            </div>
+            <div class="banner info" style="margin-top:12px">Gilt für 214 vorhandene Einträge (61,25 Std.). Änderung wird protokolliert.</div>
+            <div style="display:flex;gap:8px;justify-content:flex-end"><span class="btn ghost">Abbrechen</span><span class="btn primary">Bestätigen</span></div>
+          </div>
+        </div>
+        <p class="sample">Sample numbers.</p>
+      </div>
+      <div class="notes">
+        <h3>How it behaves</h3>
+        <ul>
+          <li>Turning it on or off asks for confirmation and shows how many existing entries it affects, because it changes past reports.</li>
+          <li>It's based on a fixed mark, not the project's name. Renaming the project changes nothing.</li>
+          <li>At release we set it once on the existing “Pause” project.</li>
+          <li>It's a separate permission from editing project details, so a Project Lead can't hide their project's hours.</li>
+        </ul>
+        <p class="rule">FR-015, TR-003 · DEC-014 (Abdullah: option B)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section id="small" aria-labelledby="h-small">
+    <h2 id="h-small"><span class="n">6</span>Sick leave and task approval</h2>
+    <p class="lead">Small changes inside existing dialogs.</p>
+    <div class="list3">
+      <div>
+        <p class="label">Sick leave · after submit</p>
+        <div class="mock"><div class="body">
+          <div class="banner ok">Krankmeldung erfasst und genehmigt. Die zuständigen Personen wurden informiert.</div>
+          <p style="font-size:12.5px;color:var(--ink2)">No waiting for approval. Approvers get an in-app notice with the date only, no medical details.</p>
+          <p style="font-size:12.5px;color:var(--ink2);margin-top:6px">If it overlaps approved vacation, those vacation days are replaced and go back to the balance.</p>
+        </div></div>
+      </div>
+      <div>
+        <p class="label">Sick leave · withdraw</p>
+        <div class="mock"><div class="body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:13px"><b>Krank</b> 18.–19.11.</span><span class="pill ok">Genehmigt</span></div>
+          <span class="btn danger">Zurückziehen</span>
+          <p style="font-size:12.5px;color:var(--ink2);margin-top:8px">The employee can withdraw until the day before the first sick day. After that, only an approver can cancel it, and the cancellation is logged.</p>
+        </div></div>
+      </div>
+      <div>
+        <p class="label">Task approval</p>
+        <div class="mock"><div class="body">
+          <div class="field"><div class="lbl">Notiz (optional)</div><div class="well" style="min-height:54px;align-items:flex-start;color:var(--muted)">Optional…</div></div>
+          <div style="display:flex;gap:8px;justify-content:flex-end"><span class="btn ghost">Ablehnen</span><span class="btn primary">Genehmigen</span></div>
+          <p style="font-size:12.5px;color:var(--ink2);margin-top:8px">Approve without a note. Rejecting still needs a reason.</p>
+        </div></div>
+      </div>
+    </div>
+    <p class="sample" style="margin-top:14px">Also fixed: in Firefox, the start and end date/time fields in Task Management overlap their calendar icons. They will show in full in Chrome, Edge and Firefox. Carried-over vacation no longer expires on 31 March, and the days that expired in March 2026 are restored.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>What we'd like from you:</b> a yes, or any changes to the six areas above. Then we start the build on branch <code>feature/client-cr-2026-10</code>. Nothing goes live without your approval.</p>
+    <p style="margin-top:8px">Sources: the BRD at <code>docs/requirements/client-cr-2026-10/brd/</code>, the workflow at <code>…/wf/</code>, and the permissions at <code>docs/features/client-cr-2026-10/PERMISSIONS.md</code>. All names and numbers on this page are sample data.</p>
+  </div>
+</footer>
+</body>
+</html>
