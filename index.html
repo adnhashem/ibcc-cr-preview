@@ -126,7 +126,7 @@
     <a href="#reports">3 · Reports</a>
     <a href="#user">4 · Working time per employee</a>
     <a href="#project">5 · Break project</a>
-    <a href="#small">6 · Sick leave and task approval</a>
+    <a href="#small">6 · Sick leave, half-day vacation and task approval</a>
   </div>
 </nav>
 
@@ -202,19 +202,19 @@
         <p class="label" style="margin-top:18px">Project picker</p>
         <div class="mock">
           <div class="opt"><span>Kovacevic</span></div>
-          <div class="opt"><span>Stützwand Nord</span><span class="num">IB-2026-031</span></div>
-          <div class="opt"><span>Stützwand Nord</span><span class="num">IB-2025-112</span></div>
+          <div class="opt"><span>Stützwand Nord</span></div>
+          <div class="opt"><span>Wetzlar</span></div>
           <div class="opt"><span>VST Beispiel</span></div>
         </div>
-        <p class="sample">Today it reads “#d4a853 IB-2026-046 — Kovacevic”. The “#d4a853” is a colour code printed as text by mistake.</p>
+        <p class="sample">Today it reads “#d4a853 IB-2026-046 — Kovacevic”. The “#d4a853” is a colour code printed as text by mistake; it is fixed.</p>
       </div>
       <div class="notes">
         <h3>How it behaves</h3>
         <ul>
-          <li>Hours show in <b>exact minutes</b> (8,25 · 4,83), like Aqeel's templates. The calendar and the old hours report keep quarter-hour rounding.</li>
+          <li>Hours use the template's format, two decimals with a comma (8,25 · 4,83), counted in <b>exact minutes</b> so the three reports add up to each other. The calendar and the old hours report keep quarter-hour rounding.</li>
           <li>Unconfirmed entries trigger a warning <b>before</b> export, and their count is printed in the file. Export isn't blocked.</li>
           <li>Leads exporting a colleague's list from the project's <b>Team Hours</b> tab get the same layout. The Kranktage and Urlaubstage rows appear only if they hold <code>reports.view_hr</code>.</li>
-          <li>Project picker: <b>name only</b>. The number is shown only when two projects have the same name.</li>
+          <li>Project picker: <b>name only</b>, always (Aqeel, 3 Nov). The project number appears only as a hover tooltip.</li>
           <li>The file is always German, whatever the user's language.</li>
         </ul>
         <p class="rule">FR-003, FR-012 · DEC-009, DEC-011</p>
@@ -350,7 +350,7 @@
 
   <!-- 6 -->
   <section id="small" aria-labelledby="h-small">
-    <h2 id="h-small"><span class="n">6</span>Sick leave and task approval</h2>
+    <h2 id="h-small"><span class="n">6</span>Sick leave, half-day vacation and task approval</h2>
     <p class="lead">Small changes inside existing dialogs.</p>
     <div class="list3">
       <div>
@@ -375,6 +375,18 @@
           <div class="field"><div class="lbl">Notiz (optional)</div><div class="well" style="min-height:54px;align-items:flex-start;color:var(--muted)">Optional…</div></div>
           <div style="display:flex;gap:8px;justify-content:flex-end"><span class="btn ghost">Ablehnen</span><span class="btn primary">Genehmigen</span></div>
           <p style="font-size:12.5px;color:var(--ink2);margin-top:8px">Approve without a note. Rejecting still needs a reason.</p>
+        </div></div>
+      </div>
+    </div>
+    <div class="list3" style="margin-top:18px">
+      <div>
+        <p class="label">Vacation · half day (new, 3 Nov)</p>
+        <div class="mock"><div class="body">
+          <div class="field"><div class="lbl">Art</div><div class="well">Urlaub (bezahlt)</div></div>
+          <div class="field"><div class="lbl">Datum</div><div class="well">14.11.2026</div></div>
+          <div class="field"><div class="lbl">Umfang</div><div style="display:flex;gap:8px"><span class="btn ghost">Ganzer Tag</span><span class="btn primary">Halber Tag</span></div></div>
+          <p style="font-size:12.5px;color:var(--ink2);margin-top:8px">Takes 0,5 days from the balance and counts half the daily target (8,00 → 4,00) as working time, not as productive hours. Worked hours that day still count: 4,00 work + 4,00 vacation = 8,00.</p>
+          <p style="font-size:12.5px;color:var(--ink2);margin-top:6px">Vacation only. Sick leave stays in whole days. Not possible on weekends or public holidays.</p>
         </div></div>
       </div>
     </div>
